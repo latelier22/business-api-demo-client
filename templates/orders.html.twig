@@ -1,35 +1,80 @@
-{% extends '_layout.html.twig' %}
+{% extends '_layout.html.twig' %} {% block title %}ORDERS{% endblock %} {% block
+content %}
+<div class="container-fluid">
+  <div class="row justify-content-center align-items-center">
+    <div class="col-lg-10">
+      <h1 class="text-center mb-4">Orders</h1>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#id</th>
+              <th scope="col">State</th>
+              <th scope="col">Created at</th>
+              <th scope="col" width="200">Items</th>
+              <th scope="col">Variant Name</th>
+              <th scope="col">Visuel</th>
+              <th scope="col" style="width: 200px">Address</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ order.state }}</td>
 
-{% block title %}products{% endblock %}
-{% block content %}
-    <h1>orders:</h1>
-    <table border="1">
-        <tr>
-            <td>#id</td>
-            <td>state</td>
-            <td>items</td>
-            <td>total</td>
-        </tr>
-        {% for order in orders %}
-        <tr>
-            <td>
-                {{ order.id }}
-            </td>
-            <td>
-                {{ order.state }}
-            </td>
-            <td>
+              <td>{{ order.createdAt|date('Y-m-d H:i:s') }}</td>
+
+              <td>
                 {% for item in order.items %}
-                    {{ item.productCode }}<br />
+                {% for image in item.images %}
+                <img
+                  src="{{ image.path }}"
+                  alt="Product Image"
+                  class="img-fluid"
+                  width="200"
+                  height="auto"
+                />
                 {% endfor %}
-            </td>
-            <td>
-                {{ order.total }}
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% for linkType, linkParams in links %}
-        <a href="{{ path('app_order_list', linkParams) }}">{{ linkType }}</a><br />
-    {% endfor %}
-{% endblock %}
+                {{ item.productCode }}<br />
+                {% endfor %}
+              </td>
+              <td>
+                {% for item in order.items %}
+                {{ item.variantName }}
+                {% endfor %}
+              </td>
+              <td>
+                {% for item in order.items %}
+                <img
+                  src="{{ item.sourceDocuments[0].thumbnailDocuments[0].path }}"
+                  alt="Visuel Image"
+                  class="img-fluid"
+                  width="200"
+                  height="auto"
+                /><br />
+                {% endfor %}
+              </td>
+              <td>
+                {% for item in order.items %}
+                {{ item.shippingAddress.lastName }}
+                {{ item.shippingAddress.firstName }}<br />
+                {{ item.shippingAddress.street }}<br />
+                {{ item.shippingAddress.postcode }}
+                {{ item.shippingAddress.city }}<br />
+                {% endfor %}
+              </td>
+              <td>{{ order.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% for linkType, linkParams in links %}
+<a href="{{ path('app_order_list', linkParams) }}">{{ linkType }}</a
+><br />
+{% endfor %} {% endblock %}

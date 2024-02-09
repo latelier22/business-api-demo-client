@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\SDK;
 
 use GuzzleHttp\Client;
@@ -11,6 +12,7 @@ use Namshi\Cuzzle\Middleware\CurlFormatterMiddleware;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class PrintoclockBAPI
@@ -168,6 +170,8 @@ Class PrintoclockBAPI
      */
     public function createOrder($data)
     {
+        dump($data);
+
         $response = $this->request('post', '/orders', $data);
         $result = json_decode($response->getBody()->getContents(), true);
 
