@@ -1,8 +1,13 @@
+# parameters:
+#     b_api_host: 'https://sandbox.api.printoclock.com'
+#     b_api_version: 'v1'
+#     b_api_login: 'latelier2'
+#     b_api_password: 'ef5c8d227140648f'
 parameters:
-    b_api_host: 'https://sandbox.api.printoclock.com'
+    b_api_host: 'https://api.printoclock.com'
     b_api_version: 'v1'
-    b_api_login: 'test'
-    b_api_password: 'test'
+    b_api_login: 'latelier2'
+    b_api_password: 'f7s8VhnAEMccskp'
 services:
     # default configuration for services in *this* file
     _defaults:

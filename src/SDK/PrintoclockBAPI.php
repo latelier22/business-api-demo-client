@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 Class PrintoclockBAPI
 {
-    const DEFAULT_PAGE_LIMIT = 25;
+    const DEFAULT_PAGE_LIMIT = 5;
 
     /**
      * @var Client
@@ -218,42 +218,89 @@ Class PrintoclockBAPI
      * @return Response
      * @throws \Exception|RequestException
      */
+    // protected function request($method, $endpoint, $data = array(), $filesPath = array())
+    // {
+    //     $url = $this->host . '/' . $this->version . $endpoint;
+
+    //     if (!$this->accessToken) {
+    //         $this->getToken();
+    //     }
+    //     if (!in_array($method, array('post', 'get'))) {
+    //         throw new \Exception('bad request method');
+    //     }
+    //     $headers = array('Authorization' => 'Bearer ' . $this->accessToken);
+
+    //     $params = array(
+    //         'headers' => $headers,
+    //         RequestOptions::QUERY => $method === 'get' ? $data : array(),
+    //     );
+    //     if (!$filesPath) {
+    //         $params[RequestOptions::FORM_PARAMS] = $method !== 'get' ? $data : array();
+    //     }
+    //     foreach ($filesPath as $inputName => $filePath) {
+    //         $params['multipart'][] = array(
+    //             'name' => $inputName,
+    //             'contents' => fopen($filePath, 'r'),
+    //         );
+    //     }
+    //     /** @var Response $response */
+    //     try {
+    //         $response = $this->client->$method($url, $params);
+
+    //         return $response;
+    //     } catch (RequestException $e) {
+    //         if ($e->getCode() === 400) {
+    //             throw new BadRequestHttpException($e->getMessage() . ' ' . $e->getResponse()->getBody()->getContents());
+    //         }
+
+    //         throw $e;
+    //     }
+    // }
     protected function request($method, $endpoint, $data = array(), $filesPath = array())
-    {
-        $url = $this->host . '/' . $this->version . $endpoint;
+{
+    $url = $this->host . '/' . $this->version . $endpoint;
 
-        if (!$this->accessToken) {
-            $this->getToken();
-        }
-        if (!in_array($method, array('post', 'get'))) {
-            throw new \Exception('bad request method');
-        }
-        $headers = array('Authorization' => 'Bearer ' . $this->accessToken);
-
-        $params = array(
-            'headers' => $headers,
-            RequestOptions::QUERY => $method === 'get' ? $data : array(),
-        );
-        if (!$filesPath) {
-            $params[RequestOptions::FORM_PARAMS] = $method !== 'get' ? $data : array();
-        }
-        foreach ($filesPath as $inputName => $filePath) {
-            $params['multipart'][] = array(
-                'name' => $inputName,
-                'contents' => fopen($filePath, 'r'),
-            );
-        }
-        /** @var Response $response */
-        try {
-            $response = $this->client->$method($url, $params);
-
-            return $response;
-        } catch (RequestException $e) {
-            if ($e->getCode() === 400) {
-                throw new BadRequestHttpException($e->getMessage() . ' ' . $e->getResponse()->getBody()->getContents());
-            }
-
-            throw $e;
-        }
+    if (!$this->accessToken) {
+        $this->getToken();
     }
+    if (!in_array($method, array('post', 'get'))) {
+        throw new \Exception('bad request method');
+    }
+    $headers = array('Authorization' => 'Bearer ' . $this->accessToken);
+
+    $params = array(
+        'headers' => $headers,
+        RequestOptions::QUERY => $method === 'get' ? $data : array(),
+    );
+    if (!$filesPath) {
+        $params[RequestOptions::FORM_PARAMS] = $method !== 'get' ? $data : array();
+    }
+    foreach ($filesPath as $inputName => $filePath) {
+        $params['multipart'][] = array(
+            'name' => $inputName,
+            'contents' => fopen($filePath, 'r'),
+        );
+    }
+
+    // Ajout d'un log pour afficher le contenu de la requête
+    $this->logger->info("Sending $method request to $url", [
+        'Headers' => $headers,
+        'Parameters' => $params,
+        'Files' => $filesPath
+    ]);
+
+    /** @var Response $response */
+    try {
+        $response = $this->client->$method($url, $params);
+
+        return $response;
+    } catch (RequestException $e) {
+        if ($e->getCode() === 400) {
+            throw new BadRequestHttpException($e->getMessage() . ' ' . $e->getResponse()->getBody()->getContents());
+        }
+
+        throw $e;
+    }
+}
+
 }
