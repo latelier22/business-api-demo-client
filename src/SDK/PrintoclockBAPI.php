@@ -19,7 +19,7 @@ use Symfony\Component\VarDumper\VarDumper;
  */
 Class PrintoclockBAPI
 {
-    const DEFAULT_PAGE_LIMIT = 25;
+    const DEFAULT_PAGE_LIMIT = 10;
 
     /**
      * @var Client
